@@ -23,19 +23,27 @@ def get_weather():
     response1 = requests.get(url1)
     data1 = response1.json()
     
-    # 检查返回的JSON数据是否包含"location"键
-    if "location" not in data1:
+    try:
+        location = data1["location"]
+    except KeyError:
         raise KeyError("Invalid JSON response, 'location' key not found")
 
-    id = data1["location"][0]["id"]
+    if not location:
+        raise KeyError("Invalid JSON response, 'location' key is empty")
+
+    id = location[0]["id"]
     
     url2 = "https://devapi.qweather.com/v7/weather/3d?location=" + id + "&key=72b5d1a456a94bd38c4a5a448fa1da66"
     response2 = requests.get(url2)
     data2 = response2.json()
-    
-    # 检查返回的JSON数据是否包含"daily"键
-    if "daily" not in data2:
+
+    try:
+        daily = data2["daily"]
+    except KeyError:
         raise KeyError("Invalid JSON response, 'daily' key not found")
+
+    if not daily:
+        raise KeyError("Invalid JSON response, 'daily' key is empty")
 
     weather = data2["daily"][0]["textDay"]
     top = data2["daily"][0]["tempMax"]
@@ -43,7 +51,6 @@ def get_weather():
     temperature = (int(top) + int(low)) / 2
     print(weather, temperature)
     return weather, temperature
-
 
 
 def get_count():
