@@ -22,14 +22,24 @@ def get_weather():
     url1 = 'https://geoapi.qweather.com/v2/city/lookup?location=' + city + '&key=72b5d1a456a94bd38c4a5a448fa1da66'
     response1 = requests.get(url1)
     data1 = response1.json()
-    id = data1["location"][0]["id"]
+    
+    # 检查返回的JSON数据是否包含"location"键
+    if "location" not in data1:
+        raise KeyError("Invalid JSON response, 'location' key not found")
 
+    id = data1["location"][0]["id"]
+    
     url2 = "https://devapi.qweather.com/v7/weather/3d?location=" + id + "&key=72b5d1a456a94bd38c4a5a448fa1da66"
-    response = requests.get(url2)
-    data = response.json()
-    weather = data["daily"][0]["textDay"]
-    top = data["daily"][0]["tempMax"]
-    low = data["daily"][0]["tempMin"]
+    response2 = requests.get(url2)
+    data2 = response2.json()
+    
+    # 检查返回的JSON数据是否包含"daily"键
+    if "daily" not in data2:
+        raise KeyError("Invalid JSON response, 'daily' key not found")
+
+    weather = data2["daily"][0]["textDay"]
+    top = data2["daily"][0]["tempMax"]
+    low = data2["daily"][0]["tempMin"]
     temperature = (int(top) + int(low)) / 2
     print(weather, temperature)
     return weather, temperature
